@@ -16,8 +16,8 @@ const __dirname = path.resolve();
 
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || "http://localhost:5173",
-    credentials: true, // allow frontend to sent cookies
+    origin: "http://localhost:5173",
+    credentials: true, // allow frontend to send cookies
   })
 );
 app.use(express.json());
