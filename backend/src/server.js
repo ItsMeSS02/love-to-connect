@@ -15,7 +15,7 @@ const PORT = process.env.PORT;
 const __dirname = path.resolve();
 
 const allowedOrigins = [
-  "http://localhost:3000",
+  "http://localhost:5173",
   "https://love-to-connect.vercel.app", // your frontend URL
 ];
 
