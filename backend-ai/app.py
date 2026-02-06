@@ -1,34 +1,47 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from groq import Groq
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+
+SYSTEM_PROMPT = (
+    "You are a friendly AI language assistant. "
+    "Help users practice languages and explain translations simply."
+)
+
 @app.post("/api/ai/chat")
 def chat():
-    user_input = request.json.get("message", "").lower()
+    user_message = request.json.get("message", "")
 
-    # Simple multilingual mock logic
-    if "hola" in user_input:
-        reply = "Hola! In English, you can say 'Hello'."
-    elif "bonjour" in user_input:
-        reply = "Bonjour! In English, you can say 'Hello'."
-    elif "hello" in user_input:
-        reply = "Hello! How can I help you learn today?"
-    else:
-        reply = (
-            "I'm your AI language assistant. "
-            "Try greeting me in another language!"
-        )
+    if not user_message:
+        return jsonify({"reply": "Please send a message."}), 400
+
+    completion = client.chat.completions.create(
+        model="llama-3.1-8b-instant",
+        messages=[
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": user_message},
+        ],
+        temperature=0.4,
+    )
 
     return jsonify({
-        "reply": reply,
-        "mode": "mock-ai"
+        "reply": completion.choices[0].message.content,
+        "mode": "groq-direct"
     })
+
 
 @app.get("/")
 def health():
-    return {"status": "AI service running (mock mode)"}
+    return {"status": "AI service running (Groq native)"}
 
-# if __name__ == "__main__":
-#     app.run(port=8000, debug=True)
+
+if __name__ == "__main__":
+    app.run(port=8000, debug=True)

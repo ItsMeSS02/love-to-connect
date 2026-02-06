@@ -2,7 +2,5 @@ flask
 flask-cors
 gunicorn
 python-dotenv
-# langchain
-# langchain-community
-# langchain-huggingface
-# huggingface_hub
+ langchain
+langchain-groq
